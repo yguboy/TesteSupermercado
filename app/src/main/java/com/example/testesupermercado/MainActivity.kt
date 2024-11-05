@@ -1,5 +1,6 @@
 package com.example.testesupermercado
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,20 +11,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import com.example.testesupermercado.Produto
 import com.example.testesupermercado.ProdutoViewModel
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+
 
 class MainActivity : ComponentActivity() {
     private val viewModel: ProdutoViewModel by viewModels()
@@ -44,12 +48,24 @@ fun AppScreen(viewModel: ProdutoViewModel) {
     var mostrarCadastro by remember { mutableStateOf(false) }
     var produtoSelecionado by remember { mutableStateOf<Produto?>(null) }
     val produtos by viewModel.produtos.observeAsState(emptyList())
+    val context = LocalContext.current
 
+    fun compartilharProduto(produto: Produto) {
+        val compartilharIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Produto: ${produto.nome}\nValor: R$${produto.valor}\nQuantidade: ${produto.quantidade}"
+            )
+            type = "text/plain"
+        }
+        val intentChooser = Intent.createChooser(compartilharIntent, "Compartilhar Produto via")
+        context.startActivity(intentChooser)
+    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-
                 produtoSelecionado = null
                 mostrarCadastro = true
             }) {
@@ -95,7 +111,7 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                             ) {
                                 Text(
                                     text = "Nome: ${produto.nome}",
-                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold) // Nome em negrito
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                                 )
                                 Row {
                                     IconButton(onClick = {
@@ -106,6 +122,11 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                                         mostrarCadastro = true
                                     }) {
                                         Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar")
+                                    }
+                                    IconButton(onClick = {
+                                        compartilharProduto(produto)
+                                    }) {
+                                        Icon(imageVector = Icons.Default.Share, contentDescription = "Compartilhar")
                                     }
                                     IconButton(onClick = {
                                         viewModel.deletarProduto(produto)
@@ -121,7 +142,7 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                             ) {
                                 Text(
                                     text = "Valor: R$${produto.valor}",
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold) // Valor em negrito
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                                 )
                             }
 
@@ -131,7 +152,7 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                             ) {
                                 Text(
                                     text = "Quantidade: ${produto.quantidade}",
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold) // Quantidade em negrito
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                                 )
                             }
                         }
