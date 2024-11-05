@@ -23,6 +23,7 @@ class ProdutoViewModel : ViewModel() {
     }
 
     fun deletarProduto(produto: Produto) {
-        _produtos.value = _produtos.value?.filter { it.id != produto.id }
+        val listaAtualizada = _produtos.value?.filter { it.id != produto.id } ?: emptyList()
+        _produtos.value = listaAtualizada
     }
 }

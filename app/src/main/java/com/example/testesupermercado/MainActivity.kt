@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
@@ -42,6 +43,8 @@ fun AppScreen(viewModel: ProdutoViewModel) {
     var quantidade by remember { mutableStateOf("") }
     var mostrarCadastro by remember { mutableStateOf(false) }
     var produtoSelecionado by remember { mutableStateOf<Produto?>(null) }
+    val produtos by viewModel.produtos.observeAsState(emptyList())
+
 
     Scaffold(
         floatingActionButton = {
@@ -76,7 +79,7 @@ fun AppScreen(viewModel: ProdutoViewModel) {
             }
 
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(viewModel.produtos.value ?: emptyList()) { produto ->
+                items(produtos) { produto ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
