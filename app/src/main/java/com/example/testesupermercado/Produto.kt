@@ -1,7 +1,11 @@
 package com.example.testesupermercado
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "produtos")
 data class Produto(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nome: String,
     val valor: Double,
     val quantidade: Int

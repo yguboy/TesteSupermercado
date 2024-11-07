@@ -20,17 +20,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import com.example.testesupermercado.data.AppDatabase
 import com.example.testesupermercado.Produto
+import com.example.testesupermercado.data.ProdutoRepository
 import com.example.testesupermercado.ProdutoViewModel
+import com.example.testesupermercado.ProdutoViewModelFactory
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
-
 class MainActivity : ComponentActivity() {
-    private val viewModel: ProdutoViewModel by viewModels()
+    private val database by lazy { AppDatabase.getDatabase(this) }
+    private val repository by lazy { ProdutoRepository(database.produtoDao()) }
+    private val viewModel: ProdutoViewModel by viewModels {
+        ProdutoViewModelFactory(repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

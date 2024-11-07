@@ -1,29 +1,33 @@
 package com.example.testesupermercado
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.example.testesupermercado.data.ProdutoRepository
+import kotlinx.coroutines.launch
 
-class ProdutoViewModel : ViewModel() {
-    private val _produtos = MutableLiveData<List<Produto>>(emptyList())
-    val produtos: LiveData<List<Produto>> get() = _produtos
+class ProdutoViewModel(private val repository: ProdutoRepository) : ViewModel() {
+    val produtos: LiveData<List<Produto>> = repository.produtos
 
-    private var idCounter = 0
-
-    fun adicionarProduto(produto: Produto) {
-        idCounter++
-        _produtos.value = _produtos.value?.plus(produto.copy(id = idCounter))
+    fun adicionarProduto(produto: Produto) = viewModelScope.launch {
+        repository.adicionarProduto(produto)
     }
 
-    fun atualizarProduto(produto: Produto) {
-        _produtos.value = _produtos.value?.map { if (it.id == produto.id) produto else it }
+    fun atualizarProduto(produto: Produto) = viewModelScope.launch {
+        repository.atualizarProduto(produto)
     }
 
-    fun deletarProduto(produto: Produto) {
-        val listaAtualizada = _produtos.value?.filter { it.id != produto.id } ?: emptyList()
-        _produtos.value = listaAtualizada
+    fun deletarProduto(produto: Produto) = viewModelScope.launch {
+        repository.deletarProduto(produto)
+    }
+}
+
+class ProdutoViewModelFactory(private val repository: ProdutoRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ProdutoViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ProdutoViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
