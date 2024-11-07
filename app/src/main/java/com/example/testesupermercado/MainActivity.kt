@@ -21,15 +21,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import com.example.testesupermercado.data.AppDatabase
-import com.example.testesupermercado.Produto
 import com.example.testesupermercado.data.ProdutoRepository
-import com.example.testesupermercado.ProdutoViewModel
-import com.example.testesupermercado.ProdutoViewModelFactory
+import com.example.testesupermercado.view.ProdutoViewModel
+import com.example.testesupermercado.view.ProdutoViewModelFactory
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.testesupermercado.model.Produto
 
 class MainActivity : ComponentActivity() {
     private val database by lazy { AppDatabase.getDatabase(this) }

@@ -2,7 +2,7 @@ package com.example.testesupermercado.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.testesupermercado.Produto
+import com.example.testesupermercado.model.Produto
 
 @Dao
 interface ProdutoDao {

@@ -1,8 +1,9 @@
-package com.example.testesupermercado
+package com.example.testesupermercado.view
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.*
+import com.example.testesupermercado.model.Produto
 import com.example.testesupermercado.data.ProdutoRepository
 import kotlinx.coroutines.launch
 

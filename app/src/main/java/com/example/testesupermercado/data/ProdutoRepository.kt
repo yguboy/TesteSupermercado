@@ -1,7 +1,7 @@
 package com.example.testesupermercado.data
 
 import androidx.lifecycle.LiveData
-import com.example.testesupermercado.Produto
+import com.example.testesupermercado.model.Produto
 
 class ProdutoRepository(private val produtoDao: ProdutoDao) {
 

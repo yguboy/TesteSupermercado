@@ -1,4 +1,4 @@
-package com.example.testesupermercado
+package com.example.testesupermercado.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
