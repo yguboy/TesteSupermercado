@@ -24,11 +24,6 @@ import com.example.testesupermercado.data.AppDatabase
 import com.example.testesupermercado.data.ProdutoRepository
 import com.example.testesupermercado.view.ProdutoViewModel
 import com.example.testesupermercado.view.ProdutoViewModelFactory
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.example.testesupermercado.model.Produto
 
 class MainActivity : ComponentActivity() {
@@ -53,7 +48,7 @@ fun AppScreen(viewModel: ProdutoViewModel) {
     var quantidade by remember { mutableStateOf("") }
     var mostrarCadastro by remember { mutableStateOf(false) }
     var produtoSelecionado by remember { mutableStateOf<Produto?>(null) }
-    val produtos by viewModel.produtos.observeAsState(emptyList())
+    val produtos by viewModel.produtos.collectAsState()
     val context = LocalContext.current
 
     fun compartilharProduto(produto: Produto) {
@@ -91,13 +86,23 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                     .padding(bottom = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Supermercado",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 30.sp
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Supermercado",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp
+                        )
                     )
-                )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Clique em + para adicionar um produto no carrinho",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                }
             }
 
             LazyColumn(modifier = Modifier.fillMaxWidth()) {

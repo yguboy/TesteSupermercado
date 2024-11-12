@@ -1,8 +1,8 @@
 package com.example.testesupermercado.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.testesupermercado.model.Produto
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProdutoDao {
@@ -16,5 +16,6 @@ interface ProdutoDao {
     suspend fun deletarProduto(produto: Produto)
 
     @Query("SELECT * FROM produtos")
-    fun listarProdutos(): LiveData<List<Produto>>
+    fun listarProdutos(): Flow<List<Produto>>
 }
+

@@ -1,11 +1,10 @@
 package com.example.testesupermercado.data
 
-import androidx.lifecycle.LiveData
 import com.example.testesupermercado.model.Produto
+import kotlinx.coroutines.flow.Flow
 
 class ProdutoRepository(private val produtoDao: ProdutoDao) {
-
-    val produtos: LiveData<List<Produto>> = produtoDao.listarProdutos()
+    val produtos: Flow<List<Produto>> = produtoDao.listarProdutos()
 
     suspend fun adicionarProduto(produto: Produto) {
         produtoDao.adicionarProduto(produto)
