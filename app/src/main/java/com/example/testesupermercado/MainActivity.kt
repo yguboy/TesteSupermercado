@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -20,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import com.example.testesupermercado.data.AppDatabase
 import com.example.testesupermercado.data.ProdutoRepository
 import com.example.testesupermercado.view.ProdutoViewModel
@@ -41,6 +43,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScreen(viewModel: ProdutoViewModel) {
     var nome by remember { mutableStateOf("") }
@@ -65,12 +68,32 @@ fun AppScreen(viewModel: ProdutoViewModel) {
     }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Supermercado",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp
+                        )
+                    )
+                },
+                actions = {
+                    IconButton(onClick = {
+                        // Ação de navegação ou outro recurso no futuro
+                    }) {
+                        Icon(Icons.Default.Share, contentDescription = "Compartilhar")
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 produtoSelecionado = null
                 mostrarCadastro = true
             }) {
-                Text("+")
+                Text("+", fontSize = 28.sp)
             }
         }
     ) { padding ->
@@ -80,6 +103,7 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
+            // Instruções no topo
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -88,29 +112,25 @@ fun AppScreen(viewModel: ProdutoViewModel) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Supermercado",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Clique em + para adicionar um produto no carrinho",
+                        text = "Clique em + para adicionar um produto",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
                     )
                 }
             }
 
+            // Lista de produtos
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(produtos) { produto ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
                     ) {
                         Column(
                             modifier = Modifier.padding(8.dp),
@@ -121,7 +141,7 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "Nome: ${produto.nome}",
+                                    text = produto.nome,
                                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                                 )
                                 Row {
@@ -134,66 +154,58 @@ fun AppScreen(viewModel: ProdutoViewModel) {
                                     }) {
                                         Icon(imageVector = Icons.Default.Edit, contentDescription = "Editar")
                                     }
-                                    IconButton(onClick = {
-                                        compartilharProduto(produto)
-                                    }) {
+                                    IconButton(onClick = { compartilharProduto(produto) }) {
                                         Icon(imageVector = Icons.Default.Share, contentDescription = "Compartilhar")
                                     }
-                                    IconButton(onClick = {
-                                        viewModel.deletarProduto(produto)
-                                    }) {
+                                    IconButton(onClick = { viewModel.deletarProduto(produto) }) {
                                         Icon(imageVector = Icons.Default.Delete, contentDescription = "Deletar")
                                     }
                                 }
                             }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Valor: R$${produto.valor}",
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                                )
-                            }
+                            Text(
+                                text = "Valor: R$${produto.valor}",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                            )
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Quantidade: ${produto.quantidade}",
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                                )
-                            }
+                            Text(
+                                text = "Quantidade: ${produto.quantidade}",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                            )
                         }
                     }
                 }
             }
         }
 
+        // Caixa de diálogo para cadastro/edição
         if (mostrarCadastro) {
             AlertDialog(
                 onDismissRequest = { mostrarCadastro = false },
-                title = { Text("Cadastrar Produto") },
+                title = { Text(if (produtoSelecionado == null) "Cadastrar Produto" else "Editar Produto") },
                 text = {
                     Column {
                         TextField(
                             value = nome,
                             onValueChange = { nome = it },
-                            label = { Text("Nome do Produto") }
+                            label = { Text("Nome do Produto") },
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         TextField(
                             value = valor,
                             onValueChange = { valor = it },
-                            label = { Text("Valor") }
+                            label = { Text("Valor") },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         TextField(
                             value = quantidade,
                             onValueChange = { quantidade = it },
-                            label = { Text("Quantidade") }
+                            label = { Text("Quantidade") },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 },
